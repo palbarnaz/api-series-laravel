@@ -14,9 +14,23 @@ class SeriesController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return Serie::all();
+        // if(!$request->has('nome')){
+        //     return Serie::with('temporadas.episodios')->get();
+
+        // }
+
+        // return Serie::whereNome($request->nome)->get();
+
+        $query = Serie::query();
+
+        if($request->has('nome')){
+            $query->where('nome', $request->nome) ;
+        }
+
+        return $query->paginate(2);
+
     }
 
     public function store(Request $request)
@@ -25,13 +39,15 @@ class SeriesController extends Controller
             ->json($this->seriesRepository->add($request), 201);
     }
 
-    public function show(Serie $series)
+    public function show(int $series)
     {
-        return $series;
+        $getSerie = Serie::whereId($series)->with('temporadas.episodios')->first();
+        return $getSerie;
     }
 
     public function update(Serie $series, Request $request)
     {
+
         $series->fill($request->all());
         $series->save();
 
