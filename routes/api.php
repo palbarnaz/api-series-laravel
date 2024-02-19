@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +22,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/series', \App\Http\Controllers\Api\SeriesController::class);
 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/series', \App\Http\Controllers\Api\SeriesController::class);
+
+});
+
+
+
+Route::post('/login', function(Request $request){
+  $credenciais = $request->only(['email', 'password']);
+
+//   $user = User::whereEmail($credenciais['email'])->first();
+
+//   if($user === null || !Hash::check($credenciais['password'], $user->password)){
+//       return response()->json('Unauthorized', 401);
+//   }
+
+  if(!Auth::attempt($credenciais)){
+    return response()->json('Unauthorized', 401);
+
+  }
+
+  $user = Auth::user();
+
+  $token = $user->createToken('token');
+
+  return response()->json($token->plainTextToken);
+});
+
+
+Route::post('/create', [UsersController::class, 'store']);
