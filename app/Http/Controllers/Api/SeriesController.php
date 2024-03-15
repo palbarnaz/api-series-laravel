@@ -39,24 +39,35 @@ class SeriesController extends Controller
             ->json($this->seriesRepository->add($request), 201);
     }
 
+
+
     public function show(int $series)
     {
-        $getSerie = Serie::whereId($series)->with('temporadas.episodios')->first();
-        return $getSerie;
+        $seriesModel = Serie::with('temporadas.episodios')->find($series);
+        if ($seriesModel === null) {
+            return response()->json(['message' => 'Series not found'], 404);
+        }
+
+        return $seriesModel;
     }
 
-    public function update(Serie $series, Request $request)
+
+
+    public function edit(int $id, Request $request)
     {
+        $serie = Serie::find($id);
 
-        $series->fill($request->all());
-        $series->save();
 
-        return $series;
+        $serie->fill($request->all());
+        $serie->save();
+
+        return $serie;
     }
 
-    public function destroy(int $series)
+
+    public function delete(int $id)
     {
-        Serie::destroy($series);
+        Serie::destroy($id);
         return response()->noContent();
     }
 }

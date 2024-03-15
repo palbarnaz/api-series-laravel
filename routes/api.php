@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UsersController;
+use App\Http\Controllers\Api\SeriesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,14 +24,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/series', \App\Http\Controllers\Api\SeriesController::class);
 
 });
 
-
-
+Route::delete('/excluir/{id}', [SeriesController::class, 'delete']);
+Route::post('/editar/{id}', [SeriesController::class, 'edit']);
 Route::post('/login', function(Request $request){
   $credenciais = $request->only(['email', 'password']);
 

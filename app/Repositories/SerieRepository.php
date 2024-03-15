@@ -10,8 +10,6 @@ class SerieRepository{
 
 
     public function add(Request $request): Serie{
-
-
         return DB::transaction(function () use ($request, &$serie){
           $serie = Serie::create($request->all());
 
@@ -34,18 +32,11 @@ class SerieRepository{
     public function edit(Request $request, Serie $series){
          Serie::where('id', $series->id)->update([
             'nome' => $request->nome,
-
         ]);
-
-
     }
-
-
 
     public function delete( Serie $series){
         $series->delete();
-
-
    }
 }
 
